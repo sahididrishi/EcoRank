@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:ecorank;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+ecorank:
+  jwt:
+    secret: dev-jwt-secret-key-at-least-32-characters-long-for-hmac
+  plugin:
+    api-key: dev-plugin-api-key
+
+logging:
+  level:
+    dev.ecorank: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+
+springdoc:
+  swagger-ui:
+    enabled: true
+
+cors:
+  allowed-origins: "*"

@@ -1,0 +1,14 @@
+name: EcoRank
+version: '${project.version}'
+main: dev.ecorank.plugin.EcoRankPlugin
+api-version: '1.21'
+description: Economy, donation store, and rank management
+authors: [EcoRank]
+dependencies:
+  server:
+    LuckPerms:
+      required: true
+      load: BEFORE
+    PlaceholderAPI:
+      required: false
+      load: BEFORE

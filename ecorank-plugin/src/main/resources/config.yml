@@ -1,0 +1,72 @@
+# EcoRank Configuration
+
+# Storage settings for player economy data
+storage:
+  # Type: sqlite or mysql
+  type: sqlite
+  # SQLite settings (only used when type: sqlite)
+  sqlite:
+    file: ecorank.db
+  # MySQL settings (only used when type: mysql)
+  mysql:
+    host: localhost
+    port: 3306
+    database: ecorank
+    username: root
+    password: ""
+    pool-size: 10
+
+# Backend API connection settings
+backend:
+  # URL of the EcoRank backend REST API (REQUIRED)
+  url: "http://localhost:8080"
+  # Shared API key for plugin-to-backend auth (REQUIRED)
+  api-key: "CHANGE_ME"
+  # Unique identifier for this server in a network
+  server-id: "main"
+  # Polling settings for order fulfillment
+  poll-interval-seconds: 5
+  max-backoff-seconds: 30
+
+# Economy settings
+economy:
+  # Starting balance for new players
+  starting-balance: 0
+  # Currency display name (singular)
+  currency-name: "Coin"
+  # Currency display name (plural)
+  currency-name-plural: "Coins"
+  # Currency symbol prepended to amounts
+  currency-symbol: "$"
+
+# Reward settings (amounts in integer coins)
+rewards:
+  # Mob kill rewards by entity type (use Bukkit EntityType names)
+  mob-kill:
+    enabled: true
+    default: 5
+    per-type:
+      ZOMBIE: 5
+      SKELETON: 7
+      CREEPER: 10
+      SPIDER: 6
+      ENDERMAN: 15
+      BLAZE: 12
+      WITHER_SKELETON: 20
+      ENDER_DRAGON: 500
+      WITHER: 250
+  # Daily login reward
+  daily-login:
+    enabled: true
+    amount: 100
+    cooldown-hours: 24
+  # Chest quest rewards
+  chest-quest:
+    enabled: true
+    amount: 25
+    cooldown-seconds: 300
+
+# Rank settings
+ranks:
+  # LuckPerms track name for rank progression
+  luckperms-track: "default"
