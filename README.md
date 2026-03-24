@@ -4,7 +4,7 @@ Self-hosted Minecraft server economy + web donation store + rank management. Zer
 
 ## Modules
 
-- **ecorank-plugin/** — Paper 1.21.x plugin (Java 17, Maven)
+- **ecorank-plugin/** — Paper 1.21.x plugin (Java 21, Maven)
 - **ecorank-backend/** — Spring Boot 3.2 REST API (PostgreSQL, Redis)
 - **ecorank-frontend/** — React 18 admin dashboard (Vite, TailwindCSS)
 
@@ -46,6 +46,7 @@ mvn clean package
 
 ## Documentation
 
-- [Setup Guide](docs/setup-guide.md)
-- [API Specification](docs/api-spec.md)
-- [Architecture](docs/architecture.md)
+- [Developer Machine Setup](docs/developer-setup.md) — Full guide for setting up on a new PC
+- [Setup Guide](docs/setup-guide.md) — Production deployment, Stripe, plugin install
+- [API Specification](docs/api-spec.md) — All endpoints with request/response examples
+- [Architecture](docs/architecture.md) — System design, DB schema, payment flows
