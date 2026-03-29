@@ -14,13 +14,19 @@ import org.springframework.stereotype.Repository;
 import dev.ecorank.backend.entity.Order;
 import dev.ecorank.backend.entity.OrderStatus;
 
+import org.springframework.data.jpa.repository.EntityGraph;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+
+    @EntityGraph(attributePaths = {"player", "product"})
+    Optional<Order> findById(Long id);
 
     Optional<Order> findByIdempotencyKey(UUID idempotencyKey);
 
     Optional<Order> findByProviderPaymentId(String providerPaymentId);
 
+    @EntityGraph(attributePaths = {"player", "product"})
     List<Order> findByStatusOrderByCreatedAtAsc(OrderStatus status);
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status = :status")
