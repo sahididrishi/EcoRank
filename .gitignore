@@ -54,3 +54,7 @@ logs/
 # Build artifacts
 build/
 out/
+
+# Claude
+.claude/
+CLAUDE.md
