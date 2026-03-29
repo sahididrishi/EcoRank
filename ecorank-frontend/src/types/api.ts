@@ -88,7 +88,6 @@ export interface UpdateProductRequest {
 
 export interface CheckoutRequest {
   productSlug: string
-  playerUuid: string
   playerName: string
   idempotencyKey: string
 }

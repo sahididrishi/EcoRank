@@ -11,7 +11,7 @@ import com.stripe.Stripe;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
-import com.stripe.model.PaymentIntent;
+import com.stripe.model.Charge;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
@@ -113,8 +113,11 @@ public class StripeService {
             return;
         }
 
-        // Save the raw event
-        webhookService.saveRawEvent(eventId, "stripe", eventType, payload);
+        // Save the raw event — null means a concurrent thread already inserted it
+        if (webhookService.saveRawEvent(eventId, "stripe", eventType, payload) == null) {
+            log.info("Stripe webhook {} was a concurrent duplicate, skipping", eventId);
+            return;
+        }
 
         try {
             switch (eventType) {
@@ -155,11 +158,11 @@ public class StripeService {
     }
 
     private void handleChargeRefunded(Event event) {
-        PaymentIntent paymentIntent = (PaymentIntent) event.getDataObjectDeserializer()
+        Charge charge = (Charge) event.getDataObjectDeserializer()
                 .getObject()
                 .orElseThrow(() -> new PaymentProcessingException("Failed to deserialize charge.refunded event"));
 
-        String paymentId = paymentIntent.getId();
+        String paymentId = charge.getPaymentIntent();
         try {
             Order order = orderService.findByProviderPaymentId(paymentId);
             orderService.markRefunded(order.getId());

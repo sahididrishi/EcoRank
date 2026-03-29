@@ -52,9 +52,9 @@ export default function App() {
 
               <Route element={<StoreLayout />}>
                 <Route path="/store" element={<StorefrontPage />} />
-                <Route path="/store/checkout/:slug" element={<CheckoutPage />} />
                 <Route path="/store/checkout/success" element={<CheckoutSuccessPage />} />
                 <Route path="/store/checkout/cancel" element={<CheckoutCancelPage />} />
+                <Route path="/store/checkout/:slug" element={<CheckoutPage />} />
               </Route>
 
               <Route path="/" element={<Navigate to="/store" replace />} />

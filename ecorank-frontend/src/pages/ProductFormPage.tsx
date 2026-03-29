@@ -23,7 +23,7 @@ export default function ProductFormPage() {
     }
   }
 
-  if (isEdit && isLoading) {
+  if (isEdit && (isLoading || !product)) {
     return (
       <div className="flex justify-center py-12">
         <LoadingSpinner size="lg" />
@@ -38,6 +38,7 @@ export default function ProductFormPage() {
       </h2>
       <div className="mt-4 rounded-xl border border-gray-200 bg-white p-6">
         <ProductForm
+          key={id}
           initial={product}
           onSubmit={handleSubmit}
           loading={create.isPending || update.isPending}

@@ -28,7 +28,7 @@ public class WebhookEvent {
     @Column(name = "event_type", length = 128)
     private String eventType;
 
-    @Column(name = "payload", columnDefinition = "text")
+    @Column(name = "payload", columnDefinition = "jsonb")
     private String payload;
 
     @Column(name = "processed", nullable = false)

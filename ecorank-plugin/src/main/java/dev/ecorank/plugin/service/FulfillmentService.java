@@ -72,18 +72,23 @@ public class FulfillmentService {
 
         logger.info("Processing " + orders.size() + " pending order(s).");
 
-        for (PendingOrder order : orders) {
-            var player = plugin.getServer().getPlayer(order.playerUuid());
+        // Dispatch to main thread — getPlayer() and other Bukkit API calls must be on main thread
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            for (PendingOrder order : orders) {
+                // Skip orders with in-flight confirmations (prevents duplicate delivery)
+                if (pendingConfirmations.contains(order.orderId())) {
+                    continue;
+                }
 
-            if (player != null && player.isOnline()) {
-                // Player is online — apply on main thread, confirm async
-                plugin.getServer().getScheduler().runTask(plugin, () ->
-                        applyOrder(order));
-            } else {
-                // Player is offline — queue for next join
-                queueForOfflinePlayer(order);
+                var player = plugin.getServer().getPlayer(order.playerUuid());
+
+                if (player != null && player.isOnline()) {
+                    applyOrder(order);
+                } else {
+                    queueForOfflinePlayer(order);
+                }
             }
-        }
+        });
     }
 
     /**
@@ -125,7 +130,8 @@ public class FulfillmentService {
                             logger.info("Granted rank '" + order.rankGroup() + "' for order " + order.orderId());
                         } else {
                             logger.warning("Failed to grant rank for order " + order.orderId() + ", will retry");
-                            queueForOfflinePlayer(order);
+                            // Dispatch back to main thread to safely modify pendingDeliveries
+                            plugin.getServer().getScheduler().runTask(plugin, () -> queueForOfflinePlayer(order));
                         }
                     });
         } else if (order.isRemoval()) {
@@ -136,7 +142,7 @@ public class FulfillmentService {
                             logger.info("Removed rank '" + order.rankGroup() + "' for order " + order.orderId());
                         } else {
                             logger.warning("Failed to remove rank for order " + order.orderId() + ", will retry");
-                            queueForOfflinePlayer(order);
+                            plugin.getServer().getScheduler().runTask(plugin, () -> queueForOfflinePlayer(order));
                         }
                     });
         } else {
@@ -212,10 +218,12 @@ public class FulfillmentService {
             Map<String, List<PendingOrderDto>> toSave = new LinkedHashMap<>();
             pendingDeliveries.forEach((uuid, orders) -> {
                 List<PendingOrderDto> dtoList = new ArrayList<>();
-                for (PendingOrder order : orders) {
-                    dtoList.add(new PendingOrderDto(
-                            order.orderId(), order.playerUuid().toString(),
-                            order.productSlug(), order.rankGroup(), order.action(), order.amountCents()));
+                synchronized (orders) {
+                    for (PendingOrder order : orders) {
+                        dtoList.add(new PendingOrderDto(
+                                order.orderId(), order.playerUuid().toString(),
+                                order.productSlug(), order.rankGroup(), order.action(), order.amountCents()));
+                    }
                 }
                 toSave.put(uuid.toString(), dtoList);
             });

@@ -5,6 +5,11 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
+const refreshClient = axios.create({
+  baseURL: '/api/v1',
+  headers: { 'Content-Type': 'application/json' },
+})
+
 let accessToken: string | null = null
 let isRefreshing = false
 let failedQueue: Array<{
@@ -56,7 +61,7 @@ api.interceptors.response.use(
       isRefreshing = true
 
       try {
-        const { data } = await axios.post<{ accessToken: string }>('/api/v1/admin/auth/refresh')
+        const { data } = await refreshClient.post<{ accessToken: string }>('/admin/auth/refresh')
         accessToken = data.accessToken
         processQueue(null, data.accessToken)
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`

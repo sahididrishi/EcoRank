@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.ecorank.backend.exception.PaymentProcessingException;
 import dev.ecorank.backend.service.PayPalService;
 import dev.ecorank.backend.service.StripeService;
 
@@ -40,9 +41,15 @@ public class WebhookController {
 
         try {
             stripeService.handleWebhookEvent(payload, sigHeader);
+        } catch (PaymentProcessingException e) {
+            if (e.getMessage() != null && e.getMessage().contains("Invalid Stripe webhook signature")) {
+                log.warn("Invalid Stripe webhook signature rejected");
+                return ResponseEntity.badRequest().body("invalid signature");
+            }
+            log.error("Error processing Stripe webhook: {}", e.getMessage());
+            // Return 200 to prevent Stripe retries for events we've already saved
         } catch (Exception e) {
             log.error("Error handling Stripe webhook: {}", e.getMessage());
-            // Always return 200 to Stripe to prevent retries for events we've already seen
         }
 
         return ResponseEntity.ok("ok");

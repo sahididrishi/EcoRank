@@ -52,14 +52,10 @@ public class WebhookService {
 
     @Transactional
     public void markProcessed(String eventId) {
-        webhookEventRepository.findByProcessedFalseAndCreatedAtBefore(Instant.now().plusSeconds(1))
-                .stream()
-                .filter(e -> e.getEventId().equals(eventId))
-                .findFirst()
-                .ifPresent(event -> {
-                    event.setProcessed(true);
-                    event.setProcessedAt(Instant.now());
-                    webhookEventRepository.save(event);
-                });
+        webhookEventRepository.findByEventId(eventId).ifPresent(event -> {
+            event.setProcessed(true);
+            event.setProcessedAt(Instant.now());
+            webhookEventRepository.save(event);
+        });
     }
 }

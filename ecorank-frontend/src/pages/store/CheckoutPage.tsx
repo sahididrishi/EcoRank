@@ -39,12 +39,12 @@ export default function CheckoutPage() {
     try {
       const { checkoutUrl } = await createCheckout({
         productSlug: product!.slug,
-        playerUuid: '00000000-0000-0000-0000-000000000000',
         playerName,
         idempotencyKey: idempotencyKey.current,
       })
       window.location.href = checkoutUrl
     } catch {
+      idempotencyKey.current = crypto.randomUUID()
       setError('Failed to create checkout session. Please try again.')
       setLoading(false)
     }

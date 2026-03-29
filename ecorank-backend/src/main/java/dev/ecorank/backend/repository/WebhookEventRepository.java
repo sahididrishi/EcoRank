@@ -2,6 +2,7 @@ package dev.ecorank.backend.repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,6 +16,8 @@ import dev.ecorank.backend.entity.WebhookEvent;
 public interface WebhookEventRepository extends JpaRepository<WebhookEvent, Long> {
 
     boolean existsByEventId(String eventId);
+
+    Optional<WebhookEvent> findByEventId(String eventId);
 
     List<WebhookEvent> findByProcessedFalseAndCreatedAtBefore(Instant before);
 

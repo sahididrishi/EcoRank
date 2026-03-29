@@ -9,8 +9,7 @@ public record CreateCheckoutRequest(
         @NotBlank(message = "Product slug is required")
         String productSlug,
 
-        @NotNull(message = "Player UUID is required")
-        UUID playerUuid,
+        UUID playerUuid, // Nullable — resolved from Mojang API if not provided
 
         @NotBlank(message = "Player name is required")
         String playerName,

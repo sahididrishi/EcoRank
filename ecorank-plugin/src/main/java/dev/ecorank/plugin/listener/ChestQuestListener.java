@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.block.Action;
 
 import java.time.Duration;
@@ -92,6 +93,11 @@ public class ChestQuestListener implements Listener {
                     .append(Component.text("+" + configService.formatAmount(reward), NamedTextColor.YELLOW))
                     .build());
         }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        clearCooldown(event.getPlayer().getUniqueId());
     }
 
     /**

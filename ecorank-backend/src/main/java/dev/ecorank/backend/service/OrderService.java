@@ -103,6 +103,11 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", orderId));
 
+        if (order.getStatus() != OrderStatus.FULFILLED && order.getStatus() != OrderStatus.QUEUED) {
+            log.warn("Order {} is in status {}, cannot refund", orderId, order.getStatus());
+            return order;
+        }
+
         order.setStatus(OrderStatus.REFUNDED);
         Order saved = orderRepository.save(order);
 

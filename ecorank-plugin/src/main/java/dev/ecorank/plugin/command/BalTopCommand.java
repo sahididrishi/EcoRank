@@ -51,9 +51,8 @@ public final class BalTopCommand {
                                          EconomyService economyService,
                                          ConfigService configService,
                                          int page) {
-        // Fetch enough entries for the requested page
-        int maxEntries = page * ENTRIES_PER_PAGE;
-        List<PlayerAccount> allTop = economyService.getTopBalances(maxEntries);
+        // Fetch all entries to compute accurate page count
+        List<PlayerAccount> allTop = economyService.getTopBalances(10000);
 
         int totalEntries = allTop.size();
         int totalPages = Math.max(1, (int) Math.ceil((double) totalEntries / ENTRIES_PER_PAGE));
